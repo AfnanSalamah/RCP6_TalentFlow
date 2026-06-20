@@ -113,11 +113,11 @@ def _send_smtp(to_email: str, subject: str, body: str, html_body: Optional[str])
 
     try:
         if port == 465:
-            with smtplib.SMTP_SSL(host, port, context=ctx) as server:
+            with smtplib.SMTP_SSL(host, port, timeout=20, context=ctx) as server:
                 server.login(username, password)
                 server.send_message(msg)
         else:
-            with smtplib.SMTP(host, port) as server:
+            with smtplib.SMTP(host, port, timeout=20) as server:
                 server.ehlo()
                 if ctx:
                     server.starttls(context=ctx)
