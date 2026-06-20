@@ -1,0 +1,83 @@
+/* Super Admin responsive helpers */
+
+.sa-main {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+.sa-main table {
+  width: 100%;
+}
+
+.sa-main th,
+.sa-main td {
+  vertical-align: middle;
+}
+
+@media (max-width: 1180px) {
+  .sa-main {
+    max-width: 100%;
+  }
+
+  .sa-main [style*="grid-template-columns"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .sa-main [style*="3fr 2fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .sa-main {
+    padding-inline: 0;
+  }
+
+  .sa-main [style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .sa-main [style*="justify-content: space-between"],
+  .sa-main [style*="justifyContent: 'space-between'"] {
+    align-items: stretch !important;
+  }
+
+  .sa-main table {
+    display: block;
+    min-width: 760px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .sa-main th,
+  .sa-main td {
+    padding-inline: 12px !important;
+  }
+
+  .sa-main input,
+  .sa-main select,
+  .sa-main textarea {
+    max-width: 100%;
+  }
+
+  .sa-main button {
+    min-height: 36px;
+  }
+}
+
+@media (max-width: 520px) {
+  .sa-main [style*="display: flex"] {
+    row-gap: 10px;
+  }
+
+  .sa-main [style*="max-width: 520"],
+  .sa-main [style*="maxWidth: 520"] {
+    max-width: calc(100vw - 24px) !important;
+  }
+
+  .sa-main [style*="padding: 36"] {
+    padding: 20px !important;
+  }
+}

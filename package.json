@@ -1,0 +1,19 @@
+{
+  "name": "talentflow-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TalentFlow — AI-Powered HR & Applicant Platform (monorepo root)",
+  "scripts": {
+    "frontend": "cd frontend && npm run dev",
+    "backend":  "cd backend && python -m uvicorn main:app --host 0.0.0.0 --port 8001 --reload",
+    "dev":      "start \"TalentFlow Backend\" cmd /k \"cd /d %cd%\\backend && python -m uvicorn main:app --host 0.0.0.0 --port 8001 --reload\" && cd frontend && npm run dev",
+    "install:frontend": "cd frontend && npm install",
+    "seed":     "cd backend && python seed.py",
+    "build":    "cd frontend && npm run build",
+    "lint":     "cd frontend && npm run lint"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm":  ">=9.0.0"
+  }
+}
