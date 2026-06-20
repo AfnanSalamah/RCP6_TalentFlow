@@ -470,11 +470,7 @@ def sa_login(body: SALoginRequest, db: Session = Depends(get_db)):
             if email_result.get("sent")
             else {
                 "email_sent": False,
-                "message": (
-                    "Email delivery is not configured. Please contact support or try again later."
-                    if email_result.get("dev_mode")
-                    else "Could not send the verification code. Please try again."
-                ),
+                "message": "Email verification is temporarily unavailable. Please try again later.",
             }
         ),
     }

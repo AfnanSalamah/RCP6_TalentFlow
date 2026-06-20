@@ -18,10 +18,15 @@ class Settings(BaseSettings):
     SMTP_HOST: str = ""
     SMTP_SERVER: str = ""
     SMTP_PORT: int = 587
+    SMTP_USER: str = ""
     SMTP_EMAIL: str = ""
     SMTP_USERNAME: str = ""
     SMTP_PASSWORD: str = ""
     SMTP_FROM: str = ""
+    RESEND_API_KEY: str = ""
+    EMAIL_FROM: str = ""
+    ALLOW_DEV_EMAIL_FALLBACK: bool = False
+    ENVIRONMENT: str = "production"
     APP_NAME: str = "TalentFlow"
     # PORT: change this (or set PORT= in .env) to avoid WinError 10013 on Windows.
     # Windows reserves ports 49152-65535 for dynamic use; 8001 is reliably free.

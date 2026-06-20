@@ -22,7 +22,7 @@ export default function ForgotPassword() {
     try {
       let activePortal = portal;
       let res = await forgotPasswordAny(email.trim(), activePortal);
-      if (res?.email_sent === false) setError("Could not send the verification code. Please try again.");
+      if (res?.email_sent === false) setError("Email verification is temporarily unavailable. Please try again later.");
       setStep("code");
     } catch (err) {
       setError(err.message || "Something went wrong.");

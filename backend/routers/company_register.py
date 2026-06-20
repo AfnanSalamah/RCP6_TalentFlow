@@ -35,14 +35,9 @@ VERIFY_TTL_MINUTES = 15
 def _code_payload(email_result: dict, code: str) -> dict:
     if email_result.get("sent"):
         return {"email_sent": True}
-    if email_result.get("dev_mode"):
-        return {
-            "email_sent": False,
-            "message": "Email delivery is not configured. Please contact support or try again later.",
-        }
     return {
         "email_sent": False,
-        "message": "Could not send the verification code. Please try again.",
+        "message": "Email verification is temporarily unavailable. Please try again later.",
     }
 
 # UI plan id → canonical plan key used everywhere else (super-admin, billing).

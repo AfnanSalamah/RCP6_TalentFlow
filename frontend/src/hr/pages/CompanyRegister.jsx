@@ -16,6 +16,7 @@ import { registerCompany, verifyCompanyEmail, resendCompanyVerification } from "
 import logo from "../assets/logo.png";
 
 const RESEND_COUNTDOWN = 60;
+const EMAIL_UNAVAILABLE = "Email verification is temporarily unavailable. Please try again later.";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -79,7 +80,7 @@ export default function CompanyRegister() {
       });
       // A 6-digit code was emailed; move to the verification step.
       setChallengeToken(data.challenge_token);
-      setError(data.email_sent === false ? "Could not send the verification code. Please try again." : "");
+      setError(data.email_sent === false ? (data.message || EMAIL_UNAVAILABLE) : "");
       setStep("verify");
     } catch (err) {
       setError(err.message || "Registration failed. Please try again.");
@@ -311,9 +312,9 @@ function VerifyStep({ email, challengeToken, setChallengeToken, initialError = "
       setCountdown(RESEND_COUNTDOWN);
       setDigits(["", "", "", "", "", ""]);
       refs.current[0]?.focus();
-      if (res.email_sent === false) setErrorMsg("Could not send the verification code. Please try again.");
+      if (res.email_sent === false) setErrorMsg(res.message || EMAIL_UNAVAILABLE);
     } catch {
-      setErrorMsg("Could not send the verification code. Please try again.");
+      setErrorMsg(EMAIL_UNAVAILABLE);
     } finally {
       setResending(false);
     }

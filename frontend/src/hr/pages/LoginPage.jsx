@@ -98,6 +98,7 @@ function EyeToggle({ show, onToggle }) {
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_UNAVAILABLE = "Email verification is temporarily unavailable. Please try again later.";
 
 // ── Main component ────────────────────────────────────────────────────────────
 
@@ -128,6 +129,7 @@ export default function LoginPage() {
   const [verifyDigits,   setVerifyDigits]   = useState(['','','','','','']);
   const [verifyError,    setVerifyError]    = useState('');
   const [verifyLoading,  setVerifyLoading]  = useState(false);
+  const [verifyResending, setVerifyResending] = useState(false);
   const [verifyShake,    setVerifyShake]    = useState(false);
   const [verifyTimer,    setVerifyTimer]    = useState(60);
   const [verifySuccess,  setVerifySuccess]  = useState(false);
@@ -257,7 +259,7 @@ export default function LoginPage() {
       is_hr: !!data.is_hr,
     });
     setVerifyDigits(['','','','','','']);
-    setVerifyError(data.email_sent === false ? (data.message || 'Could not send the verification code. Please try again.') : '');
+    setVerifyError(data.email_sent === false ? (data.message || EMAIL_UNAVAILABLE) : '');
     setVerifySuccess(false);
     setVerifyTimer(60);
     clearInterval(verifyTimerRef.current);
@@ -307,6 +309,7 @@ export default function LoginPage() {
 
   async function handleVerifyResend() {
     if (!verifyModal) return;
+    setVerifyResending(true);
     try {
       let res;
       if (verifyModal.is_hr) {
@@ -323,14 +326,16 @@ export default function LoginPage() {
       }
       setVerifyTimer(60);
       setVerifyDigits(['','','','','','']);
-      setVerifyError(res?.email_sent === false ? (res?.message || 'Could not send the verification code. Please try again.') : '');
+      setVerifyError(res?.email_sent === false ? (res?.message || EMAIL_UNAVAILABLE) : '');
       clearInterval(verifyTimerRef.current);
       verifyTimerRef.current = setInterval(() => {
         setVerifyTimer(t => { if (t <= 1) { clearInterval(verifyTimerRef.current); return 0; } return t - 1; });
       }, 1000);
       verifyRefs.current[0]?.focus();
     } catch (err) {
-      setVerifyError('Could not send the verification code. Please try again.');
+      setVerifyError(EMAIL_UNAVAILABLE);
+    } finally {
+      setVerifyResending(false);
     }
   }
 
@@ -694,6 +699,7 @@ export default function LoginPage() {
           shake={verifyShake}
           success={verifySuccess}
           timer={verifyTimer}
+          resending={verifyResending}
           onSubmit={handleVerifySubmit}
           onResend={handleVerifyResend}
           onClose={() => { setVerifyModal(null); clearInterval(verifyTimerRef.current); }}
@@ -893,7 +899,7 @@ function TwoFaModal({ modal, digits, setDigits, inputRefs, error, setError, load
 
 // ── Email Verification Modal ──────────────────────────────────────────────────
 
-function VerifyEmailModal({ modal, digits, setDigits, inputRefs, error, setError, loading, shake, success, timer, onSubmit, onResend, onClose }) {
+function VerifyEmailModal({ modal, digits, setDigits, inputRefs, error, setError, loading, shake, success, timer, resending, onSubmit, onResend, onClose }) {
   const fullCode = digits.join('');
 
   useEffect(() => {
@@ -1069,9 +1075,10 @@ function VerifyEmailModal({ modal, digits, setDigits, inputRefs, error, setError
               ) : (
                 <button
                   onClick={onResend}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 700, color: '#0A4174', textDecoration: 'underline' }}
+                  disabled={resending}
+                  style={{ background: 'none', border: 'none', cursor: resending ? 'not-allowed' : 'pointer', fontSize: 13, fontWeight: 700, color: '#0A4174', textDecoration: 'underline', opacity: resending ? 0.65 : 1 }}
                 >
-                  Resend verification code
+                  {resending ? 'Sending...' : 'Resend verification code'}
                 </button>
               )}
             </div>

@@ -123,11 +123,7 @@ def hr_login(body: HRLoginRequest, db: Session = Depends(get_db)):
             if email_result.get("sent")
             else {
                 "email_sent": False,
-                "message": (
-                    "Email delivery is not configured. Please contact support or try again later."
-                    if email_result.get("dev_mode")
-                    else "Could not send the verification code. Please try again."
-                ),
+                "message": "Email verification is temporarily unavailable. Please try again later.",
             }
         ),
     }
@@ -233,7 +229,7 @@ def forgot_hr_password(body: ForgotPasswordRequest, db: Session = Depends(get_db
         )
         return {
             "message": "If that email is registered, a reset code has been sent.",
-            **({"email_sent": True} if email_result.get("sent") else {"email_sent": False, "message": "Could not send the verification code. Please try again."}),
+            **({"email_sent": True} if email_result.get("sent") else {"email_sent": False, "message": "Email verification is temporarily unavailable. Please try again later."}),
         }
     return {"message": "If that email is registered, a reset code has been sent."}
 

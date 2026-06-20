@@ -13,6 +13,7 @@ const BRAND = {
 };
 
 const RESEND_COUNTDOWN = 60;
+const EMAIL_UNAVAILABLE = 'Email verification is temporarily unavailable. Please try again later.';
 
 export default function VerifyEmail() {
   const navigate = useNavigate();
@@ -121,10 +122,10 @@ export default function VerifyEmail() {
       if (res.challenge_token) setChallengeToken(res.challenge_token);
       setCountdown(RESEND_COUNTDOWN);
       setDigits(['', '', '', '', '', '']);
-      setErrorMsg(res.email_sent === false ? 'Could not send the verification code. Please try again.' : '');
+      setErrorMsg(res.email_sent === false ? (res.message || EMAIL_UNAVAILABLE) : '');
       refs.current[0]?.focus();
     } catch (err) {
-      setErrorMsg('Could not send the verification code. Please try again.');
+      setErrorMsg(EMAIL_UNAVAILABLE);
     } finally {
       setResending(false);
     }
