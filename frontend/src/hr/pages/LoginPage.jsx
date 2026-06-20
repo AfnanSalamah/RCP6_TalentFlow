@@ -255,10 +255,9 @@ export default function LoginPage() {
       challengeToken: data.challenge_token,
       email: data.email || '',
       is_hr: !!data.is_hr,
-      devCode: data.dev_code || '',
     });
     setVerifyDigits(['','','','','','']);
-    setVerifyError(data.email_sent === false && !data.dev_code ? 'Could not send the verification code. Please try again.' : '');
+    setVerifyError(data.email_sent === false ? (data.message || 'Could not send the verification code. Please try again.') : '');
     setVerifySuccess(false);
     setVerifyTimer(60);
     clearInterval(verifyTimerRef.current);
@@ -315,16 +314,16 @@ export default function LoginPage() {
         const { unifiedLogin: ul } = await import('../../api/auth');
         res = await ul(loginIdentifier.trim(), loginPassword);
         if (res.requires_2fa) {
-          setVerifyModal(m => ({ ...m, challengeToken: res.challenge_token, devCode: res.dev_code || '' }));
+          setVerifyModal(m => ({ ...m, challengeToken: res.challenge_token }));
         }
       } else {
         const { applicantResendVerification } = await import('../../api/auth');
         res = await applicantResendVerification(verifyModal.challengeToken);
-        setVerifyModal(m => ({ ...m, challengeToken: res.challenge_token, devCode: res.dev_code || '' }));
+        setVerifyModal(m => ({ ...m, challengeToken: res.challenge_token }));
       }
       setVerifyTimer(60);
       setVerifyDigits(['','','','','','']);
-      setVerifyError(res?.email_sent === false && !res?.dev_code ? 'Could not send the verification code. Please try again.' : '');
+      setVerifyError(res?.email_sent === false ? (res?.message || 'Could not send the verification code. Please try again.') : '');
       clearInterval(verifyTimerRef.current);
       verifyTimerRef.current = setInterval(() => {
         setVerifyTimer(t => { if (t <= 1) { clearInterval(verifyTimerRef.current); return 0; } return t - 1; });
@@ -1000,40 +999,6 @@ function VerifyEmailModal({ modal, digits, setDigits, inputRefs, error, setError
                 We sent a 6-digit code to<br />
                 <strong style={{ color: '#0A4174' }}>{maskedEmail}</strong>
               </p>
-
-              {/* Dev code banner — only when SMTP not configured */}
-              {modal.devCode && (
-                <div style={{
-                  marginTop: 14, padding: '12px 16px',
-                  background: 'linear-gradient(135deg,#FFF7ED,#FFFBEB)',
-                  border: '1.5px dashed #F59E0B', borderRadius: 12,
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10,
-                }}>
-                  <div style={{ textAlign: 'left' }}>
-                    <p style={{ margin: 0, fontSize: 11, fontWeight: 700, color: '#92400E', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      Email verification
-                    </p>
-                    <p style={{ margin: '4px 0 0', fontSize: 22, fontWeight: 900, color: '#D97706', letterSpacing: '0.18em', fontVariantNumeric: 'tabular-nums' }}>
-                      {modal.devCode}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard?.writeText(modal.devCode);
-                      const digits = modal.devCode.split('').slice(0, 6);
-                      setDigits([...digits, ...Array(6 - digits.length).fill('')]);
-                      if (digits.length === 6) onSubmit(modal.devCode);
-                    }}
-                    style={{
-                      flexShrink: 0, padding: '8px 14px', borderRadius: 8,
-                      background: '#F59E0B', border: 'none', cursor: 'pointer',
-                      fontSize: 12, fontWeight: 700, color: '#fff',
-                    }}
-                  >
-                    Continue
-                  </button>
-                </div>
-              )}
             </div>
 
             {/* OTP digit boxes */}

@@ -123,9 +123,8 @@ def hr_login(body: HRLoginRequest, db: Session = Depends(get_db)):
             if email_result.get("sent")
             else {
                 "email_sent": False,
-                **({"dev_code": code} if email_result.get("dev_mode") else {}),
                 "message": (
-                    "Email delivery is not configured. Use the verification code shown on this page."
+                    "Email delivery is not configured. Please contact support or try again later."
                     if email_result.get("dev_mode")
                     else "Could not send the verification code. Please try again."
                 ),

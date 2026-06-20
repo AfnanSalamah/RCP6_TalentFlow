@@ -26,8 +26,7 @@ def _code_payload(email_result: dict, code: str) -> dict:
     if email_result.get("dev_mode"):
         return {
             "email_sent": False,
-            "dev_code": code,
-            "message": "Email delivery is not configured. Use the verification code shown on this page.",
+            "message": "Email delivery is not configured. Please contact support or try again later.",
         }
     return {
         "email_sent": False,
