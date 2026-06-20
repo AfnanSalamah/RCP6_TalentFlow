@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import SALayout from "../components/Layout";
 import { saApi } from "../api/index";
+import { BASE as API } from "../../api/client";
 import { ArrowLeft, Clock, Filter, LifeBuoy, Loader2, Mail, MessageSquare, Paperclip, RefreshCw, Send } from "lucide-react";
 
 const STATUSES = ["Open", "In Progress", "Resolved", "Closed"];
@@ -11,7 +12,6 @@ const statusStyle = {
   Closed: { bg: "#F1F5F9", color: "#475569", border: "#CBD5E1" },
 };
 const priorityDot = { Low: "#94A3B8", Medium: "#3478F6", High: "#F59E0B", Urgent: "#DC2626" };
-const API = import.meta.env.VITE_API_URL || "http://localhost:8001";
 
 export default function SupportManagement() {
   const [tickets, setTickets] = useState([]);

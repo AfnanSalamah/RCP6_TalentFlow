@@ -41,6 +41,9 @@ html {
   font-weight: 800;
   font-size: 17px;
   transition: 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
 }
 
 .nav-link:hover {

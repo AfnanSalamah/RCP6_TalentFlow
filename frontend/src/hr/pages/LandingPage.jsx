@@ -83,9 +83,9 @@ export default function LandingPage() {
 
         <div className="nav-links">
           {[
-            { label: "About Us", targetId: "about-us" },
-            { label: "Contact", targetId: "contact-footer" },
-          ].map(({ label, targetId }) => (
+            { label: "About Us", targetId: "about-us", icon: Users },
+            { label: "Contact", targetId: "contact-footer", icon: Mail },
+          ].map(({ label, targetId, icon: Icon }) => (
             <a
               key={label}
               href="#"
@@ -97,6 +97,7 @@ export default function LandingPage() {
               }}
               className="nav-link"
             >
+              <Icon size={18} aria-hidden="true" />
               {label}
             </a>
           ))}

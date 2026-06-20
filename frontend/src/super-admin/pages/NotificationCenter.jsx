@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import SALayout from '../components/Layout';
 import { saApi } from '../api/index';
+import { formatLocalDateTime } from '../../utils/dateTime';
 import { Activity, BarChart3, Bell, Check, HeartPulse, ShieldAlert, Trash2 } from 'lucide-react';
 
 const SECTIONS = ['Platform Events', 'Security Alerts', 'System Health', 'Analytics Reports'];
@@ -23,7 +24,7 @@ function normalizeNotification(n) {
     section: SECTIONS.includes(n.section) ? n.section : 'Platform Events',
     severity: SEVERITY[n.severity] ? n.severity : 'Info',
     is_read: Boolean(n.is_read ?? n.read),
-    created_at: n.created_at ? new Date(n.created_at).toLocaleString() : '',
+    created_at: n.created_at ? formatLocalDateTime(n.created_at) : '',
   };
 }
 

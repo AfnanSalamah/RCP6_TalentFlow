@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import SALayout from '../components/Layout';
 import { saApi } from '../api/index';
+import { formatLocalDate } from '../../utils/dateTime';
 import { ArrowLeft, Building2, CreditCard, Users, Save, PauseCircle, PlayCircle } from 'lucide-react';
 
 export default function CompanyDetail() {
@@ -112,7 +113,7 @@ export default function CompanyDetail() {
                 {[
                   { label: 'Plan', value: co.subscription_plan?.replace('_',' ') },
                   { label: 'Status', value: co.subscription_status },
-                  { label: 'Expires', value: co.subscription_end_date ? new Date(co.subscription_end_date).toLocaleDateString() : '—' },
+                  { label: 'Expires', value: co.subscription_end_date ? formatLocalDate(co.subscription_end_date) : '—' },
                   { label: 'Days Left', value: co.days_left != null ? `${co.days_left} days` : '—' },
                   { label: 'Max Users', value: co.max_users },
                   { label: 'Max Jobs', value: co.max_jobs },

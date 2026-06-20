@@ -1,4 +1,4 @@
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost:8001';
+import { BASE } from '../../api/client';
 
 function getToken() {
   // Prefer the dedicated SA token; fall back to a super_admin HR token

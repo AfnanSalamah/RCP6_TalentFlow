@@ -125,6 +125,8 @@ export const talentPoolApi = {
 // â”€â”€â”€ AI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const aiApi = {
+  chat: (message, context = {}, portal = "applicant") => api.post("/ai/chat", { message, context }, portal),
+
   // Applicant-facing
   reviewResume:          () => api.post("/ai/resume-review", {}),
   jobMatching:     (data) => api.post("/ai/job-matching", data),

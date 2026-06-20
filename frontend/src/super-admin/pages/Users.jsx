@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import SALayout from '../components/Layout';
 import { saApi } from '../api/index';
+import { formatLocalDate } from '../../utils/dateTime';
 import { Building2, KeyRound, Plus, Search, UserCheck, UserX, X } from 'lucide-react';
 
 const emptyAdd = {
@@ -149,7 +150,7 @@ export default function SAUsers() {
                   <td style={td}>
                     <span style={{ ...pill, background: u.status === 'active' ? '#D1FAE5' : '#FEF2F2', color: u.status === 'active' ? '#065F46' : '#DC2626' }}>{u.status}</span>
                   </td>
-                  <td style={{ ...td, fontSize: 12, color: '#94A3B8' }}>{u.created_at ? new Date(u.created_at).toLocaleDateString() : '-'}</td>
+                  <td style={{ ...td, fontSize: 12, color: '#94A3B8' }}>{formatLocalDate(u.created_at)}</td>
                   <td style={td}>
                     <div style={{ display: 'flex', gap: 6 }}>
                       <button title={u.status === 'active' ? 'Disable' : 'Enable'} onClick={() => toggleUser(u)} style={{ ...actionBtn, background: u.status === 'active' ? '#FEF2F2' : '#D1FAE5', color: u.status === 'active' ? '#DC2626' : '#059669' }}>

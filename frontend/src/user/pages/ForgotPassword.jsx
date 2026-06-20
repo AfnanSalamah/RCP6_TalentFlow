@@ -22,15 +22,6 @@ export default function ForgotPassword() {
     try {
       let activePortal = portal;
       let res = await forgotPasswordAny(email.trim(), activePortal);
-      if (!res?.email_sent && window.location.hostname === "127.0.0.1") {
-        const alternatePortal = activePortal === "hr" ? "applicant" : "hr";
-        const alternate = await forgotPasswordAny(email.trim(), alternatePortal);
-        if (alternate?.email_sent) {
-          activePortal = alternatePortal;
-          res = alternate;
-          setPortal(alternatePortal);
-        }
-      }
       if (res?.email_sent === false) setError("Could not send the verification code. Please try again.");
       setStep("code");
     } catch (err) {

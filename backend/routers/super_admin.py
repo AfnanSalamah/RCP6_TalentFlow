@@ -124,6 +124,10 @@ class SAApplicantCreate(BaseModel):
     headline: str = ""
     status: str = "active"
 
+
+class UserDeleteByEmailRequest(BaseModel):
+    email: str
+
 PLAN_DEFAULTS = {
     "free_trial":   {"max_users": 5,   "max_jobs": 10,  "max_ai_requests": 100,  "monthly_price": 0,    "yearly_price": 0},
     "basic":        {"max_users": 15,  "max_jobs": 30,  "max_ai_requests": 500,  "monthly_price": 49,   "yearly_price": 499},
@@ -1031,6 +1035,70 @@ def reset_user_password(user_id: int, body: PasswordResetRequest, request: Reque
     _audit(db, sa, f"Reset password for {managed_type}: {u.email}", "Users", request=request)
     db.commit()
     return {"message": "Password reset successfully"}
+
+
+@router.delete("/users/by-email")
+def delete_user_by_email(
+    body: UserDeleteByEmailRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+    sa: models.SuperAdmin = Depends(get_current_super_admin),
+):
+    email = body.email.lower().strip()
+    deleted = {"email": email, "applicants": 0, "hr_users": 0}
+
+    applicant = db.query(models.Applicant).filter(func.lower(models.Applicant.email) == email).first()
+    if applicant:
+        app_ids = [row[0] for row in db.query(models.Application.id).filter(models.Application.applicant_id == applicant.id).all()]
+        interview_ids = [row[0] for row in db.query(models.Interview.id).filter(models.Interview.applicant_id == applicant.id).all()]
+        if app_ids:
+            db.query(models.ApplicationTimeline).filter(models.ApplicationTimeline.application_id.in_(app_ids)).delete(synchronize_session=False)
+        if interview_ids:
+            db.query(models.InterviewFeedback).filter(models.InterviewFeedback.interview_id.in_(interview_ids)).delete(synchronize_session=False)
+            db.query(models.InterviewNote).filter(models.InterviewNote.interview_id.in_(interview_ids)).delete(synchronize_session=False)
+        db.query(models.Interview).filter(models.Interview.applicant_id == applicant.id).delete(synchronize_session=False)
+        db.query(models.Application).filter(models.Application.applicant_id == applicant.id).delete(synchronize_session=False)
+        db.query(models.TalentPool).filter(models.TalentPool.candidate_id == applicant.id).delete(synchronize_session=False)
+        db.query(models.Contract).filter(
+            or_(models.Contract.applicant_id == applicant.id, func.lower(models.Contract.candidate_email) == email)
+        ).delete(synchronize_session=False)
+        db.query(models.Notification).filter(
+            or_(models.Notification.applicant_id == applicant.id, models.Notification.recipient_user_id == applicant.id)
+        ).delete(synchronize_session=False)
+        ticket_ids = [row[0] for row in db.query(models.SupportTicket.id).filter(
+            or_(models.SupportTicket.requester_id == applicant.id, func.lower(models.SupportTicket.requester_email) == email)
+        ).all()]
+        if ticket_ids:
+            db.query(models.SupportAttachment).filter(models.SupportAttachment.ticket_id.in_(ticket_ids)).delete(synchronize_session=False)
+            db.query(models.TicketMessage).filter(models.TicketMessage.ticket_id.in_(ticket_ids)).delete(synchronize_session=False)
+            db.query(models.TicketReply).filter(models.TicketReply.ticket_id.in_(ticket_ids)).delete(synchronize_session=False)
+            db.query(models.SupportTicket).filter(models.SupportTicket.id.in_(ticket_ids)).delete(synchronize_session=False)
+        db.delete(applicant)
+        deleted["applicants"] = 1
+
+    hr_user = db.query(models.HRUser).filter(func.lower(models.HRUser.email) == email).first()
+    if hr_user:
+        if _role_value(hr_user.role) == "super_admin":
+            raise HTTPException(status_code=400, detail="Refusing to delete the platform super admin account")
+        db.query(models.LoginHistory).filter(models.LoginHistory.user_id == hr_user.id, models.LoginHistory.user_type == "hr").delete(synchronize_session=False)
+        db.query(models.AccountActivity).filter(models.AccountActivity.user_id == hr_user.id, models.AccountActivity.user_type == "hr").delete(synchronize_session=False)
+        ticket_ids = [row[0] for row in db.query(models.SupportTicket.id).filter(
+            or_(models.SupportTicket.requester_id == hr_user.id, func.lower(models.SupportTicket.requester_email) == email)
+        ).all()]
+        if ticket_ids:
+            db.query(models.SupportAttachment).filter(models.SupportAttachment.ticket_id.in_(ticket_ids)).delete(synchronize_session=False)
+            db.query(models.TicketMessage).filter(models.TicketMessage.ticket_id.in_(ticket_ids)).delete(synchronize_session=False)
+            db.query(models.TicketReply).filter(models.TicketReply.ticket_id.in_(ticket_ids)).delete(synchronize_session=False)
+            db.query(models.SupportTicket).filter(models.SupportTicket.id.in_(ticket_ids)).delete(synchronize_session=False)
+        db.delete(hr_user)
+        deleted["hr_users"] = 1
+
+    if not deleted["applicants"] and not deleted["hr_users"]:
+        return {**deleted, "deleted": False, "message": "No user found for this email"}
+
+    _audit(db, sa, f"Deleted user by email: {email}", "Users", request=request)
+    db.commit()
+    return {**deleted, "deleted": True}
 
 # ─── Support Tickets ──────────────────────────────────────────────────────────
 

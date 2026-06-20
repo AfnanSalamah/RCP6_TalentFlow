@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import SALayout from '../components/Layout';
 import { saApi } from '../api/index';
+import { formatLocalDateTime } from '../../utils/dateTime';
 import { Search, Shield, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const MODULE_COLORS = {
@@ -79,7 +80,7 @@ export default function AuditLogs() {
                 <tr key={l.id} style={{ borderBottom: '1px solid #F8FAFC' }}
                   onMouseEnter={e => e.currentTarget.style.background = '#FAFBFF'}
                   onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
-                  <td style={{ padding: '11px 14px', fontSize: 11, color: '#94A3B8', whiteSpace: 'nowrap' }}>{new Date(l.created_at).toLocaleString()}</td>
+                  <td style={{ padding: '11px 14px', fontSize: 11, color: '#94A3B8', whiteSpace: 'nowrap' }}>{formatLocalDateTime(l.created_at)}</td>
                   <td style={{ padding: '11px 14px', fontSize: 13, fontWeight: 600, color: '#0F172A', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.user || 'System'}</td>
                   <td style={{ padding: '11px 14px' }}>
                     <span style={{ padding: '2px 8px', borderRadius: 99, fontSize: 10, fontWeight: 700, background: '#EFF6FF', color: MODULE_COLORS[l.module] || '#475569', textTransform: 'capitalize' }}>{l.module}</span>

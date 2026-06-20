@@ -13,6 +13,7 @@ import {
 import { Card } from "../components/ui/Card";
 import { aiApi } from "../../api/index";
 import { useAuth } from "../context/AuthContext";
+import { formatLocalTime } from "../../utils/dateTime";
 
 const capabilities = [
   {
@@ -89,51 +90,15 @@ function formatFit(f) {
 
 // Route a free-text request to the right backend AI endpoint.
 async function callBackendAI(text, userName = "") {
-  const msg = text.toLowerCase();
-  if (msg.includes("job description") || msg.includes("jd") || msg.includes("generate a job")) {
-    const titleMatch = text.match(/for (?:a |an )?([A-Za-z0-9 /-]+?)(?: role| position|,| requiring|$)/i);
-    const res = await aiApi.jobDescription({ title: titleMatch?.[1]?.trim() || text, skills: extractSkills(text) });
-    return res.job_description;
-  }
-  if (msg.includes("resume") || msg.includes("cv") || msg.includes("summarize a resume")) {
-    const res = await aiApi.resumeAnalysis({ resume_text: text, target_skills: extractSkills(text) });
-    return formatAnalysis(res);
-  }
-  if (msg.includes("fit") || msg.includes("match") || msg.includes("analyze the fit")) {
-    const candidateName = text.match(/candidate named ([A-Za-z][A-Za-z ]+)/i)?.[1]?.trim()
-      || text.match(/candidate ([A-Z][A-Za-z]+(?: [A-Z][A-Za-z]+)?)/)?.[1]
-      || userName
-      || "Candidate";
-    const res = await aiApi.candidateFit({ role_skills: extractSkills(text), candidate_name: candidateName });
-    return formatFit(res);
-  }
-  if (msg.includes("interview")) {
-    const res = await aiApi.interviewSummary({ notes: text });
-    return `## Interview Summary\n\n${res.summary}`;
-  }
-  if (msg.includes("offer")) {
-    const nameMatch = text.match(/for ([A-Z][a-z]+(?: [A-Z][a-z]+)?)/);
-    const roleMatch = text.match(/(?:the )?([A-Za-z ]+?) role/i);
-    const salMatch = text.match(/\$[\d,]+(?:\/day|\/year)?/);
-    const dateMatch = text.match(/\d{4}-\d{2}-\d{2}/);
-    const res = await aiApi.offerGenerator({
-      candidate_name: nameMatch?.[1] || "Candidate",
-      role_title: roleMatch?.[1]?.trim() || "the role",
-      salary: salMatch?.[0] || "a competitive salary",
-      start_date: dateMatch?.[0] || "a mutually agreed date",
-    });
-    return res.offer_letter;
-  }
-  // Default: treat as a job-description request so something useful is generated.
-  const res = await aiApi.jobDescription({ title: text, skills: extractSkills(text) });
-  return res.job_description;
+  const res = await aiApi.chat(text, { portal: "hr", userName }, "hr");
+  return res.answer;
 }
 
 export default function AIAssistant() {
   const { user } = useAuth();
   const displayName = user?.name || user?.displayName || user?.email?.split("@")[0] || "";
   const [messages, setMessages] = useState([
-    { role: "assistant", content: DEFAULT_MSG(displayName), time: "Now" },
+    { role: "assistant", content: DEFAULT_MSG(displayName), time: formatLocalTime(new Date()) },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -152,17 +117,17 @@ export default function AIAssistant() {
 
   const sendMessage = async (text) => {
     if (!text.trim() || loading) return;
-    setMessages((prev) => [...prev, { role: "user", content: text, time: "Now" }]);
+    setMessages((prev) => [...prev, { role: "user", content: text, time: formatLocalTime(new Date()) }]);
     setInput("");
     setLoading(true);
     try {
       const content = await callBackendAI(text, displayName);
-      setMessages((prev) => [...prev, { role: "assistant", content, time: "Now" }]);
+      setMessages((prev) => [...prev, { role: "assistant", content, time: formatLocalTime(new Date()) }]);
     } catch (e) {
       setMessages((prev) => [...prev, {
         role: "assistant",
         content: `⚠️ ${e.message || "The AI service is unavailable right now. Please try again."}`,
-        time: "Now",
+        time: formatLocalTime(new Date()),
       }]);
     } finally {
       setLoading(false);

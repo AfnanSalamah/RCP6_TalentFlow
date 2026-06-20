@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import SALayout from '../components/Layout';
 import { saApi } from '../api/index';
+import { formatLocalDateTime } from '../../utils/dateTime';
 import { Plus, Megaphone, Trash2, X, Globe, Building2 } from 'lucide-react';
 
 const TYPE_COLORS = { info: '#0A4174:#EFF6FF', warning: '#92400E:#FEF3C7', success: '#065F46:#D1FAE5', critical: '#DC2626:#FEF2F2' };
@@ -83,7 +84,7 @@ export default function Announcements() {
                     </span>
                   </div>
                   <p style={{ fontSize: 14, color: '#374151', margin: '0 0 8px', lineHeight: 1.6 }}>{a.message}</p>
-                  <span style={{ fontSize: 11, color: '#94A3B8' }}>{new Date(a.created_at).toLocaleString()}</span>
+                  <span style={{ fontSize: 11, color: '#94A3B8' }}>{formatLocalDateTime(a.created_at)}</span>
                 </div>
                 <button onClick={() => handleDelete(a.id)} style={{ width: 32, height: 32, borderRadius: 8, border: 'none', background: '#FEF2F2', color: '#DC2626', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <Trash2 size={14} />

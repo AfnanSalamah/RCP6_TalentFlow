@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { getNavigationForRole, ROLE_LABELS, ROLE_COLORS } from "../../rbac/rbacConfig";
 import { notificationsApi } from "../../../api/index";
+import { formatLocalDateTime } from "../../../utils/dateTime";
 
 const NOTIF_ICON = {
   interview: { icon: Calendar,      color: "#0A4174", bg: "#EFF6FF" },
@@ -172,7 +173,7 @@ export default function TopNav({ user, onLogout }) {
           id: n.id,
           type: n.type || "info",
           text: n.message || n.title || "",
-          time: n.created_at ? new Date(n.created_at).toLocaleString() : "",
+          time: n.created_at ? formatLocalDateTime(n.created_at) : "",
           isRead: Boolean(n.is_read ?? n.read),
           route: normalizeNotificationRoute(n.link),
         })));

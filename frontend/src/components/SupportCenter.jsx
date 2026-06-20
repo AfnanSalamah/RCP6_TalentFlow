@@ -12,6 +12,8 @@ import {
   X,
 } from "lucide-react";
 import { supportApi } from "../api/index";
+import { BASE as apiBase } from "../api/client";
+import { formatLocalDateTime } from "../utils/dateTime";
 
 const CATEGORIES = [
   "Technical Issue",
@@ -37,8 +39,6 @@ const priorityColors = {
   High: "#F59E0B",
   Urgent: "#DC2626",
 };
-
-const apiBase = import.meta.env.VITE_API_URL || "http://localhost:8001";
 
 export default function SupportCenter({ portal = "applicant" }) {
   const [tickets, setTickets] = useState([]);
@@ -212,7 +212,7 @@ export default function SupportCenter({ portal = "applicant" }) {
                           <Paperclip size={12} /> {attachment.fileName}
                         </a>
                       ))}
-                      <div style={{ ...styles.time, color: mine ? "#BFDBFE" : "#94A3B8" }}>{message.createdAt}</div>
+                      <div style={{ ...styles.time, color: mine ? "#BFDBFE" : "#94A3B8" }}>{formatLocalDateTime(message.createdAt || message.created_at)}</div>
                     </div>
                   </div>
                 );

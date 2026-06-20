@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import SALayout from '../components/Layout';
 import { saApi } from '../api/index';
+import { formatLocalDateTime } from '../../utils/dateTime';
 import { Ticket, Plus, X, Send, ChevronDown } from 'lucide-react';
 
 const STATUS_COLORS = { 'Open': '#EFF6FF:#0A4174', 'In Progress': '#FFFBEB:#92400E', 'Resolved': '#D1FAE5:#065F46', 'Closed': '#F1F5F9:#475569' };
@@ -124,14 +125,14 @@ export default function Tickets() {
                 <div style={{ padding: '14px 18px', background: '#F8FAFC', borderRadius: 12, border: '1px solid #F1F5F9' }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: '#0A4174', marginBottom: 6 }}>{detail.company_name} (Original)</div>
                   <div style={{ fontSize: 14, color: '#374151', lineHeight: 1.6 }}>{detail.message}</div>
-                  <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 6 }}>{new Date(detail.created_at).toLocaleString()}</div>
+                  <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 6 }}>{formatLocalDateTime(detail.created_at)}</div>
                 </div>
                 {/* Replies */}
                 {detail.replies?.map(r => (
                   <div key={r.id} style={{ padding: '14px 18px', background: r.author === 'Super Admin' ? '#EFF6FF' : '#F8FAFC', borderRadius: 12, border: `1px solid ${r.author === 'Super Admin' ? '#BFDBFE' : '#F1F5F9'}`, alignSelf: r.author === 'Super Admin' ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
                     <div style={{ fontSize: 12, fontWeight: 700, color: r.author === 'Super Admin' ? '#0A4174' : '#374151', marginBottom: 4 }}>{r.author}</div>
                     <div style={{ fontSize: 14, color: '#374151', lineHeight: 1.6 }}>{r.message}</div>
-                    <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4 }}>{new Date(r.created_at).toLocaleString()}</div>
+                    <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4 }}>{formatLocalDateTime(r.created_at)}</div>
                   </div>
                 ))}
               </div>

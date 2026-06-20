@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SALayout from '../components/Layout';
 import { saApi } from '../api/index';
+import { formatLocalDate } from '../../utils/dateTime';
 import { CreditCard, AlertTriangle, CheckCircle, Clock, ChevronRight } from 'lucide-react';
 
 export default function Subscriptions() {
@@ -105,8 +106,8 @@ export default function Subscriptions() {
                       {co.subscription_status}
                     </span>
                   </td>
-                  <td style={{ padding: '12px 16px', fontSize: 12, color: '#94A3B8' }}>{co.subscription_start_date ? new Date(co.subscription_start_date).toLocaleDateString() : '—'}</td>
-                  <td style={{ padding: '12px 16px', fontSize: 12, color: '#94A3B8' }}>{co.subscription_end_date ? new Date(co.subscription_end_date).toLocaleDateString() : '—'}</td>
+                  <td style={{ padding: '12px 16px', fontSize: 12, color: '#94A3B8' }}>{co.subscription_start_date ? formatLocalDate(co.subscription_start_date) : '—'}</td>
+                  <td style={{ padding: '12px 16px', fontSize: 12, color: '#94A3B8' }}>{co.subscription_end_date ? formatLocalDate(co.subscription_end_date) : '—'}</td>
                   <td style={{ padding: '12px 16px', fontSize: 13, fontWeight: 700, color: co.days_left != null && co.days_left <= 30 ? '#D97706' : '#475569' }}>
                     {co.days_left != null ? `${co.days_left}d` : '—'}
                   </td>

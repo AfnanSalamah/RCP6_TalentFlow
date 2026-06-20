@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { skillOptions, languageOptions } from '../data/mockData';
 import Icon from '../components/common/Icon';
 import { profileApi, resumeApi } from '../../api/index';
+import { BASE as API_BASE } from '../../api/client';
 
 const genId = (prefix) => `${prefix}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
@@ -511,8 +512,7 @@ export default function Profile() {
                     const formData = new FormData();
                     formData.append('file', file);
                     const token = localStorage.getItem('tf_user_token');
-                    const base = import.meta.env.VITE_API_URL || 'http://localhost:8001';
-                    const res = await fetch(`${base}/applicant/resume/upload`, {
+                    const res = await fetch(`${API_BASE}/applicant/resume/upload`, {
                       method: 'POST',
                       headers: token ? { Authorization: `Bearer ${token}` } : {},
                       body: formData,

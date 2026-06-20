@@ -4,6 +4,7 @@ import AppLayout from '../components/layout/AppLayout';
 import { useAuth } from '../context/AuthContext';
 import Icon from '../components/common/Icon';
 import { dashboardApi, jobsApi, notificationsApi, applicationsApi } from '../../api/index';
+import { formatLocalDate } from '../../utils/dateTime';
 
 const statusColors = {
   'Applied':             { bg: '#EEF7FC', color: '#49769F' },
@@ -187,7 +188,7 @@ export default function Dashboard() {
                           <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{app.job_title || app.jobTitle}</td>
                           <td style={{ color: 'var(--text-secondary)' }}>{app.company}</td>
                           <td style={{ color: 'var(--text-muted)', fontSize: 13 }}>
-                            {app.applied_at ? new Date(app.applied_at).toLocaleDateString() : app.appliedDate}
+                            {app.applied_at ? formatLocalDate(app.applied_at) : app.appliedDate}
                           </td>
                           <td><StatusBadge status={app.status} /></td>
                           <td style={{ color: 'var(--text-muted)' }}><Icon name="chevronRight" size={16} /></td>
@@ -304,7 +305,7 @@ export default function Dashboard() {
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.title}</div>
                         <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
-                          {n.created_at ? new Date(n.created_at).toLocaleDateString() : ''}
+                          {n.created_at ? formatLocalDate(n.created_at) : ''}
                         </div>
                       </div>
                       {!n.read && <div style={{ width: 8, height: 8, background: 'var(--accent)', borderRadius: '50%', flexShrink: 0, marginTop: 4 }} />}

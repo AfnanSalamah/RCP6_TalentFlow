@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import SALayout from '../components/Layout';
 import { saApi } from '../api/index';
+import { formatLocalDateTime } from '../../utils/dateTime';
 import { Shield, Mail, User, KeyRound, Save, Phone, Calendar, Clock, Upload, Activity, History, Lock } from 'lucide-react';
 
 const emptyProfile = {
@@ -140,7 +141,7 @@ function Card({ title, children, icon: Icon }) {
 }
 function Info({ icon: Icon, label, value, action }) { return <div style={{ background: '#fff', borderRadius: 16, padding: 18, border: '1px solid #F1F5F9' }}><div style={labelSt}><Icon size={16} /> {label}</div><div style={{ marginTop: 8, fontWeight: 900, color: '#001D39' }}>{value}</div>{action && <div style={{ marginTop: 10 }}>{action}</div>}</div>; }
 function List({ rows, primary, secondary, empty }) { if (!rows?.length) return <p style={{ color: '#94A3B8' }}>{empty}</p>; return <div style={{ display: 'grid', gap: 10 }}>{rows.slice(0, 8).map((r, i) => <div key={r.id || i} style={{ padding: 12, borderRadius: 12, background: '#F8FAFC' }}><div style={{ fontWeight: 800, color: '#0F172A' }}>{primary(r) || '—'}</div><div style={{ fontSize: 12, color: '#64748B', marginTop: 3 }}>{secondary(r)}</div></div>)}</div>; }
-function formatDate(v) { if (!v) return ''; const d = new Date(v); return Number.isNaN(d.getTime()) ? String(v) : d.toLocaleString(); }
+function formatDate(v) { return v ? formatLocalDateTime(v) : ''; }
 const labelSt = { display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 800, color: '#475569' };
 const inputSt = { width: '100%', boxSizing: 'border-box', padding: '12px 14px', border: '1.5px solid #E2E8F0', borderRadius: 12, outline: 'none', fontSize: 14, color: '#0F172A' };
 const miniBtn = { border: 0, borderRadius: 10, padding: '8px 12px', background: '#001D39', color: '#fff', fontWeight: 800, cursor: 'pointer' };

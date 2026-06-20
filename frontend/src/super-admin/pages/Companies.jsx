@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SALayout from '../components/Layout';
 import { saApi } from '../api/index';
+import { formatLocalDate } from '../../utils/dateTime';
 import { Plus, Search, Building2, Edit2, Trash2, PauseCircle, PlayCircle, ChevronRight, X, Bell, ShieldCheck } from 'lucide-react';
 
 const STATUS_COLORS = {
@@ -165,7 +166,7 @@ export default function Companies() {
                   <td style={{ padding: '14px 16px' }}><Badge label={co.subscription_status} map={STATUS_COLORS} /></td>
                   <td style={{ padding: '14px 16px', fontSize: 13, color: '#475569' }}>{co.max_users}</td>
                   <td style={{ padding: '14px 16px', fontSize: 12, color: co.days_left != null && co.days_left <= 30 ? '#D97706' : '#94A3B8' }}>
-                    {co.subscription_end_date ? new Date(co.subscription_end_date).toLocaleDateString() : '—'}
+                    {co.subscription_end_date ? formatLocalDate(co.subscription_end_date) : '—'}
                     {co.days_left != null && co.days_left <= 30 && <span style={{ marginLeft: 4, fontWeight: 700 }}>({co.days_left}d)</span>}
                   </td>
                   <td style={{ padding: '14px 16px' }}>
