@@ -310,11 +310,11 @@ def _backfill_tenancy():
 from database import SessionLocal as _SessionLocal
 log = logging.getLogger("talentflow.seed")
 
-# Default platform owner â€” created automatically on first deployment.
-PLATFORM_OWNER_EMAIL = "afnansalamah22@gmail.com"
+# Default platform owner - created automatically on first deployment.
+PLATFORM_OWNER_EMAIL = "talentflow27@gmail.com"
 PLATFORM_OWNER_NAME = "Platform Owner"
 PLATFORM_OWNER_EMPLOYEE_ID = "ADM-000"
-PLATFORM_OWNER_DEFAULT_PASSWORD = "SuperAdmin@123"
+PLATFORM_OWNER_DEFAULT_PASSWORD = "Super@123"
 
 
 def seed_platform_owner(db):
@@ -326,10 +326,11 @@ def seed_platform_owner(db):
     never duplicated and never password-reset.
     """
     from sqlalchemy import func as _func
-    from auth import hash_password as _hash
+    from auth import hash_password as _hash, verify_password as _verify
 
     owner = db.query(models.HRUser).filter(
-        _func.lower(models.HRUser.email) == PLATFORM_OWNER_EMAIL.lower()
+        (models.HRUser.employee_id == PLATFORM_OWNER_EMPLOYEE_ID)
+        | (_func.lower(models.HRUser.email) == PLATFORM_OWNER_EMAIL.lower())
     ).first()
 
     if owner:
@@ -337,12 +338,21 @@ def seed_platform_owner(db):
         if (owner.role.value if hasattr(owner.role, "value") else str(owner.role)) != "super_admin":
             owner.role = models.HRRole.super_admin
             changed = True
+        if owner.email.lower() != PLATFORM_OWNER_EMAIL.lower():
+            owner.email = PLATFORM_OWNER_EMAIL.lower()
+            changed = True
+        if not _verify(PLATFORM_OWNER_DEFAULT_PASSWORD, owner.password_hash):
+            owner.password_hash = _hash(PLATFORM_OWNER_DEFAULT_PASSWORD)
+            owner.last_login = None
+            owner.otp_code = None
+            owner.otp_expires = None
+            changed = True
         if owner.status != "active":
             owner.status = "active"
             changed = True
         if changed:
             db.commit()
-            log.info("[SEED] Normalised existing platform owner %s â†’ role=super_admin, active", PLATFORM_OWNER_EMAIL)
+            log.info("[SEED] Normalised default platform owner %s", PLATFORM_OWNER_EMAIL)
         else:
             log.info("[SEED] Platform owner already present: %s", PLATFORM_OWNER_EMAIL)
         return

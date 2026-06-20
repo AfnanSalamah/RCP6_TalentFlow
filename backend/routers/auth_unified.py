@@ -20,6 +20,12 @@ log = logging.getLogger("talentflow.auth")
 def _code_payload(email_result: dict, code: str) -> dict:
     if email_result.get("sent"):
         return {"email_sent": True}
+    if email_result.get("dev_mode"):
+        return {
+            "email_sent": False,
+            "dev_code": code,
+            "message": "Email delivery is not configured. Use the verification code shown on this page.",
+        }
     return {
         "email_sent": False,
         "message": "Could not send the verification code. Please try again.",

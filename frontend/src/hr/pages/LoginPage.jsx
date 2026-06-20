@@ -251,9 +251,14 @@ export default function LoginPage() {
   }
 
   function _openVerifyModal(data) {
-    setVerifyModal({ challengeToken: data.challenge_token, email: data.email || '', is_hr: !!data.is_hr });
+    setVerifyModal({
+      challengeToken: data.challenge_token,
+      email: data.email || '',
+      is_hr: !!data.is_hr,
+      devCode: data.dev_code || '',
+    });
     setVerifyDigits(['','','','','','']);
-    setVerifyError(data.email_sent === false ? 'Could not send the verification code. Please try again.' : '');
+    setVerifyError(data.email_sent === false && !data.dev_code ? 'Could not send the verification code. Please try again.' : '');
     setVerifySuccess(false);
     setVerifyTimer(60);
     clearInterval(verifyTimerRef.current);
@@ -310,16 +315,16 @@ export default function LoginPage() {
         const { unifiedLogin: ul } = await import('../../api/auth');
         res = await ul(loginIdentifier.trim(), loginPassword);
         if (res.requires_2fa) {
-          setVerifyModal(m => ({ ...m, challengeToken: res.challenge_token }));
+          setVerifyModal(m => ({ ...m, challengeToken: res.challenge_token, devCode: res.dev_code || '' }));
         }
       } else {
         const { applicantResendVerification } = await import('../../api/auth');
         res = await applicantResendVerification(verifyModal.challengeToken);
-        setVerifyModal(m => ({ ...m, challengeToken: res.challenge_token }));
+        setVerifyModal(m => ({ ...m, challengeToken: res.challenge_token, devCode: res.dev_code || '' }));
       }
       setVerifyTimer(60);
       setVerifyDigits(['','','','','','']);
-      setVerifyError(res?.email_sent === false ? 'Could not send the verification code. Please try again.' : '');
+      setVerifyError(res?.email_sent === false && !res?.dev_code ? 'Could not send the verification code. Please try again.' : '');
       clearInterval(verifyTimerRef.current);
       verifyTimerRef.current = setInterval(() => {
         setVerifyTimer(t => { if (t <= 1) { clearInterval(verifyTimerRef.current); return 0; } return t - 1; });
@@ -997,7 +1002,7 @@ function VerifyEmailModal({ modal, digits, setDigits, inputRefs, error, setError
               </p>
 
               {/* Dev code banner — only when SMTP not configured */}
-              {false && (
+              {modal.devCode && (
                 <div style={{
                   marginTop: 14, padding: '12px 16px',
                   background: 'linear-gradient(135deg,#FFF7ED,#FFFBEB)',
@@ -1009,15 +1014,15 @@ function VerifyEmailModal({ modal, digits, setDigits, inputRefs, error, setError
                       Email verification
                     </p>
                     <p style={{ margin: '4px 0 0', fontSize: 22, fontWeight: 900, color: '#D97706', letterSpacing: '0.18em', fontVariantNumeric: 'tabular-nums' }}>
-                      {''}
+                      {modal.devCode}
                     </p>
                   </div>
                   <button
                     onClick={() => {
-                      navigator.clipboard?.writeText('');
-                      const digits = ''.split('').slice(0, 6);
+                      navigator.clipboard?.writeText(modal.devCode);
+                      const digits = modal.devCode.split('').slice(0, 6);
                       setDigits([...digits, ...Array(6 - digits.length).fill('')]);
-                      if (digits.length === 6) onSubmit('');
+                      if (digits.length === 6) onSubmit(modal.devCode);
                     }}
                     style={{
                       flexShrink: 0, padding: '8px 14px', borderRadius: 8,

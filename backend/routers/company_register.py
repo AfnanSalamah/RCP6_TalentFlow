@@ -31,6 +31,21 @@ router = APIRouter(prefix="/auth", tags=["Company Registration"])
 TRIAL_DAYS = 14
 VERIFY_TTL_MINUTES = 15
 
+
+def _code_payload(email_result: dict, code: str) -> dict:
+    if email_result.get("sent"):
+        return {"email_sent": True}
+    if email_result.get("dev_mode"):
+        return {
+            "email_sent": False,
+            "dev_code": code,
+            "message": "Email delivery is not configured. Use the verification code shown on this page.",
+        }
+    return {
+        "email_sent": False,
+        "message": "Could not send the verification code. Please try again.",
+    }
+
 # UI plan id → canonical plan key used everywhere else (super-admin, billing).
 PLAN_ALIASES = {
     "starter": "basic",
@@ -263,7 +278,7 @@ def register_company(body: CompanyRegisterRequest, db: Session = Depends(get_db)
         "challenge_token": challenge,
         "email": company_email,
         "message": "A 6-digit verification code has been sent to your email.",
-        **({"email_sent": True} if email_result.get("sent") else {"email_sent": False, "message": "Could not send the verification code. Please try again."}),
+        **_code_payload(email_result, code),
     }
 
 
@@ -323,5 +338,5 @@ def resend_company_verification(body: TwoFactorVerifyRequest, db: Session = Depe
     return {
         "challenge_token": challenge,
         "message": "A new verification code has been sent to your email.",
-        **({"email_sent": True} if email_result.get("sent") else {"email_sent": False, "message": "Could not send the verification code. Please try again."}),
+        **_code_payload(email_result, code),
     }
