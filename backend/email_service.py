@@ -43,7 +43,8 @@ def _smtp_config() -> tuple[str, int, str, str, str]:
         or getattr(settings, "SMTP_USERNAME", "")
         or ""
     ).strip()
-    password = (getattr(settings, "SMTP_PASSWORD", "") or "").strip()
+    # Gmail app passwords are often copied as four groups with spaces.
+    password = (getattr(settings, "SMTP_PASSWORD", "") or "").replace(" ", "").strip()
     from_email = (
         getattr(settings, "SMTP_FROM", "")
         or getattr(settings, "EMAIL_FROM", "")
