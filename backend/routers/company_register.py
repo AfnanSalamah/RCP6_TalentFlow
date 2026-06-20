@@ -18,7 +18,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from database import get_db
-from auth import hash_password, create_access_token, decode_token
+from auth import hash_password, create_access_token, decode_token, is_expired
 from email_service import send_email
 from NotificationEmailService import render_notification_email
 from welcome_service import welcome_company
@@ -304,7 +304,7 @@ def verify_company_email(body: TwoFactorVerifyRequest, db: Session = Depends(get
 
     if not admin.otp_code or admin.otp_code != body.code.strip():
         raise HTTPException(status_code=400, detail="Invalid verification code")
-    if not admin.otp_expires or datetime.utcnow() > admin.otp_expires:
+    if is_expired(admin.otp_expires):
         raise HTTPException(status_code=400, detail="Verification code has expired. Please request a new one.")
 
     admin.status = "active"

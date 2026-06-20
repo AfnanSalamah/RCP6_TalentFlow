@@ -10,7 +10,7 @@ from schemas import (
     ForgotPasswordRequest, ResetPasswordRequest, ResetPasswordOtpRequest, TokenResponse,
     TwoFactorVerifyRequest, TwoFactorSettingsRequest
 )
-from auth import hash_password, verify_password, create_access_token, get_current_applicant, decode_token
+from auth import hash_password, verify_password, create_access_token, get_current_applicant, decode_token, is_expired
 from config import settings
 from email_service import send_email
 from NotificationEmailService import render_notification_email
@@ -139,7 +139,7 @@ def verify_email(body: TwoFactorVerifyRequest, db: Session = Depends(get_db)):
         return _applicant_token_response(applicant)
     if not applicant.verification_otp or applicant.verification_otp != body.code.strip():
         raise HTTPException(status_code=400, detail="Invalid verification code")
-    if not applicant.verification_otp_expires or datetime.utcnow() > applicant.verification_otp_expires:
+    if is_expired(applicant.verification_otp_expires):
         raise HTTPException(status_code=400, detail="Verification code has expired. Please request a new one.")
 
     applicant.is_verified = True
@@ -248,7 +248,7 @@ def verify_2fa(body: TwoFactorVerifyRequest, db: Session = Depends(get_db)):
     ).first()
     if not applicant or not applicant.otp_code or applicant.otp_code != body.code.strip():
         raise HTTPException(status_code=400, detail="Invalid verification code")
-    if not applicant.otp_expires or datetime.utcnow() > applicant.otp_expires:
+    if is_expired(applicant.otp_expires):
         raise HTTPException(status_code=400, detail="Verification code expired")
     applicant.otp_code = None
     applicant.otp_expires = None
@@ -312,7 +312,7 @@ def reset_password(body: ResetPasswordRequest, db: Session = Depends(get_db)):
     applicant = db.query(models.Applicant).filter(
         models.Applicant.reset_token == body.token
     ).first()
-    if not applicant or not applicant.reset_token_expires or datetime.utcnow() > applicant.reset_token_expires:
+    if not applicant or is_expired(applicant.reset_token_expires):
         raise HTTPException(status_code=400, detail="Invalid or expired reset token")
     applicant.password_hash = hash_password(body.new_password)
     applicant.reset_token = None
@@ -329,8 +329,7 @@ def reset_password_otp(body: ResetPasswordOtpRequest, db: Session = Depends(get_
     if (
         not applicant
         or applicant.reset_token != body.code.strip()
-        or not applicant.reset_token_expires
-        or datetime.utcnow() > applicant.reset_token_expires
+        or is_expired(applicant.reset_token_expires)
     ):
         raise HTTPException(status_code=400, detail="Invalid or expired reset code")
     applicant.password_hash = hash_password(body.new_password)

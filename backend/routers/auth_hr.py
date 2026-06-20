@@ -9,7 +9,7 @@ import pyotp
 from database import get_db
 from config import settings
 from schemas import HRLoginRequest, TokenResponse, TwoFactorVerifyRequest, TwoFactorSettingsRequest, ForgotPasswordRequest, ResetPasswordOtpRequest
-from auth import verify_password, create_access_token, hash_password, get_current_hr_user, decode_token
+from auth import verify_password, create_access_token, hash_password, get_current_hr_user, decode_token, is_expired
 from email_service import send_email
 from NotificationEmailService import render_notification_email
 import models
@@ -118,7 +118,19 @@ def hr_login(body: HRLoginRequest, db: Session = Depends(get_db)):
         "challenge_token": challenge,
         "email": user.email,
         "message": "A 6-digit verification code has been sent to your email.",
-        **({"email_sent": True} if email_result.get("sent") else {"email_sent": False, "message": "Could not send the verification code. Please try again."}),
+        **(
+            {"email_sent": True}
+            if email_result.get("sent")
+            else {
+                "email_sent": False,
+                **({"dev_code": code} if email_result.get("dev_mode") else {}),
+                "message": (
+                    "Email delivery is not configured. Use the verification code shown on this page."
+                    if email_result.get("dev_mode")
+                    else "Could not send the verification code. Please try again."
+                ),
+            }
+        ),
     }
 
 
@@ -144,7 +156,7 @@ def verify_hr_2fa(body: TwoFactorVerifyRequest, db: Session = Depends(get_db)):
 
     # Email OTP check
     if user.otp_code and user.otp_code == code:
-        if user.otp_expires and datetime.utcnow() <= user.otp_expires:
+        if not is_expired(user.otp_expires):
             ok = True
             log.info("[HR-2FA] Email OTP verified for %s", user.email)
         else:
@@ -236,7 +248,7 @@ def reset_hr_password_otp(body: ResetPasswordOtpRequest, db: Session = Depends(g
         not user
         or user.reset_token != body.code.strip()
         or not user.reset_token_expires
-        or datetime.utcnow() > user.reset_token_expires
+        or is_expired(user.reset_token_expires)
     ):
         raise HTTPException(status_code=400, detail="Invalid or expired reset code")
     user.password_hash = hash_password(body.new_password)

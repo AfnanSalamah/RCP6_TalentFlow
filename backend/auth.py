@@ -35,6 +35,13 @@ def decode_token(token: str) -> Optional[dict]:
         return None
 
 
+def is_expired(expires_at: Optional[datetime]) -> bool:
+    if not expires_at:
+        return True
+    now = datetime.now(expires_at.tzinfo) if expires_at.tzinfo else datetime.utcnow()
+    return now > expires_at
+
+
 # ─── HR auth dependency ───────────────────────────────────────────────────────
 
 def get_current_hr_user(

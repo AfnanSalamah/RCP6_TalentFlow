@@ -14,7 +14,7 @@ from sqlalchemy import func, text, or_
 
 from database import get_db
 from config import settings
-from auth import hash_password, verify_password, create_access_token, decode_token, get_current_super_admin
+from auth import hash_password, verify_password, create_access_token, decode_token, get_current_super_admin, is_expired
 from email_service import send_email
 from NotificationEmailService import render_notification_email, send_notification_email
 from welcome_service import welcome_candidate, welcome_company, welcome_employee
@@ -493,7 +493,7 @@ def sa_verify_otp(body: SAOTPVerifyRequest, db: Session = Depends(get_db)):
     if not sa.otp_code or sa.otp_code != code:
         log.warning("[SA-2FA] Invalid OTP for %s", sa.email)
         raise HTTPException(status_code=400, detail="Invalid verification code")
-    if not sa.otp_expires or datetime.utcnow() > sa.otp_expires:
+    if is_expired(sa.otp_expires):
         log.warning("[SA-2FA] Expired OTP for %s", sa.email)
         raise HTTPException(status_code=400, detail="Verification code has expired")
 
