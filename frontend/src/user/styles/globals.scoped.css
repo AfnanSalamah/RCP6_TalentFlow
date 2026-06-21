@@ -392,6 +392,8 @@ to { opacity: 1; transform: translateX(0); }}
   align-items: center;
   gap: 9px;
   padding: 6px 12px 6px 6px;
+  min-width: 132px;
+  max-width: 210px;
   border-radius: 999px;
   border: 1.5px solid rgba(189,216,233,.95);
   background: linear-gradient(180deg, #FFFFFF 0%, #F5FBFE 100%);
@@ -408,15 +410,25 @@ to { opacity: 1; transform: translateX(0); }}
   flex-direction: column;
   align-items: flex-start;
   line-height: 1.15;
+  min-width: 0;
+  max-width: 120px;
 }
 .user-portal .topbar-user-text strong {
   font-size: 13px;
   color: #001D39;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .user-portal .topbar-user-text span {
   font-size: 11px;
   color: #4E8EA2;
   font-weight: 700;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .user-portal .topbar-menu-btn {
   display: none !important;
@@ -526,13 +538,15 @@ to { opacity: 1; transform: translateX(0); }}
 @media (max-width: 1180px) {.user-portal .topbar-shell { padding: 0 16px; gap: 12px; }
 .user-portal .topbar-logo { width: 128px; }
 .user-portal .top-nav-link { font-size: 12px; padding: 8px 10px; gap: 5px; }}
-@media (max-width: 1320px) {.user-portal .topbar-user-text { display: none; }
-.user-portal .top-nav-link { font-size: 12px; padding: 8px 8px; gap: 5px; }
+@media (max-width: 1320px) {.user-portal .top-nav-link { font-size: 12px; padding: 8px 8px; gap: 5px; }
+.user-portal .topbar-user { min-width: 124px; max-width: 178px; padding-right: 10px; }
+.user-portal .topbar-user-text { max-width: 92px; }
 .user-portal .top-nav-link svg { width: 15px; height: 15px; }}
 @media (max-width: 1100px) {.user-portal .topbar-nav { display: none; }
-.user-portal .topbar-user-text { display: none; }
 .user-portal .topbar-menu-btn { display: inline-flex !important; }
-.user-portal .topbar-shell { justify-content: space-between; }}
+.user-portal .topbar-shell { justify-content: space-between; }
+.user-portal .topbar-user { min-width: 132px; max-width: 220px; }
+.user-portal .topbar-user-text { max-width: 130px; }}
 @media (max-width: 768px) {.user-portal .topbar-header { height: 66px; }
 .user-portal .topbar-logo { width: 124px; height: 36px; }
 .user-portal .page-wrapper { padding: 16px !important; }

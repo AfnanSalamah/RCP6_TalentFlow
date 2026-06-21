@@ -423,7 +423,7 @@ export default function TopNav({ user, onLogout }) {
             <div className="relative">
               <button
                 onClick={() => setUserMenuOpen((o) => !o)}
-                className="h-14 px-4 rounded-full flex items-center gap-3 text-[#001D39] font-bold border border-[#BDD8E9] bg-[#F5FBFF] hover:bg-[#EAF6FC] transition-colors shadow-sm"
+                className="h-14 px-3 xl:px-4 rounded-full flex items-center gap-2.5 xl:gap-3 text-[#001D39] font-bold border border-[#BDD8E9] bg-[#F5FBFF] hover:bg-[#EAF6FC] transition-colors shadow-sm max-w-[230px]"
               >
                 {/* Avatar */}
                 <span
@@ -433,11 +433,11 @@ export default function TopNav({ user, onLogout }) {
                   {avatar}
                 </span>
                 {/* Name + role */}
-                <span className="hidden xl:flex flex-col items-start leading-tight">
-                  <strong className="text-sm">{userName}</strong>
+                <span className="hidden lg:flex flex-col items-start leading-tight min-w-0">
+                  <strong className="text-sm max-w-[116px] xl:max-w-[140px] truncate">{userName}</strong>
                   <RoleBadge hrRole={hrRole} />
                 </span>
-                <ChevronDown size={16} className="hidden xl:block text-[#49769F]" />
+                <ChevronDown size={16} className="hidden lg:block text-[#49769F] flex-shrink-0" />
               </button>
 
               {userMenuOpen && (
