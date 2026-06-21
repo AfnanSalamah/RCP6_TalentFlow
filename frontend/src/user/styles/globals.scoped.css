@@ -316,10 +316,10 @@ to { opacity: 1; transform: translateX(0); }}
   height: 100%;
   width: min(100%, 1560px);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 clamp(12px, 2vw, 24px);
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: clamp(10px, 1.4vw, 18px);
 }
 .user-portal .topbar-brand {
   display: flex;
@@ -338,7 +338,8 @@ to { opacity: 1; transform: translateX(0); }}
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: clamp(2px, .45vw, 6px);
+  overflow: hidden;
 }
 .user-portal .top-nav-link {
   min-height: 40px;
@@ -346,7 +347,7 @@ to { opacity: 1; transform: translateX(0); }}
   align-items: center;
   justify-content: center;
   gap: 7px;
-  padding: 9px 13px;
+  padding: 9px clamp(8px, .75vw, 13px);
   border-radius: 999px;
   color: #49769F;
   background: transparent;
@@ -354,6 +355,7 @@ to { opacity: 1; transform: translateX(0); }}
   font-weight: 700;
   transition: all .18s ease;
   white-space: nowrap;
+  flex: 0 1 auto;
 }
 .user-portal .top-nav-link:hover {
   color: #0A4174;
@@ -383,6 +385,7 @@ to { opacity: 1; transform: translateX(0); }}
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 .user-portal .topbar-user {
   display: flex;
@@ -523,7 +526,7 @@ to { opacity: 1; transform: translateX(0); }}
 @media (max-width: 1180px) {.user-portal .topbar-shell { padding: 0 16px; gap: 12px; }
 .user-portal .topbar-logo { width: 128px; }
 .user-portal .top-nav-link { font-size: 12px; padding: 8px 10px; gap: 5px; }}
-@media (max-width: 980px) {.user-portal .topbar-nav { display: none; }
+@media (max-width: 1280px) {.user-portal .topbar-nav { display: none; }
 .user-portal .topbar-user-text { display: none; }
 .user-portal .topbar-menu-btn { display: inline-flex !important; }
 .user-portal .topbar-shell { justify-content: space-between; }}
@@ -605,14 +608,14 @@ to { opacity: 1; transform: translateX(0); }}
 @media (max-width: 768px) {.user-portal .topbar-user-menu-wrap { display: none; }}
 /* ===== Final official logo + desktop account menu tweaks ===== */
 .user-portal .topbar-brand {
-  min-width: 210px;
+  min-width: clamp(112px, 12vw, 210px);
   justify-content: flex-start;
   overflow: visible;
 }
 .user-portal .topbar-logo {
-  width: 195px !important;
+  width: clamp(112px, 12vw, 195px) !important;
   max-width: 195px !important;
-  height: 58px !important;
+  height: clamp(42px, 4vw, 58px) !important;
   object-fit: contain !important;
   object-position: left center !important;
   display: block;
@@ -626,10 +629,10 @@ to { opacity: 1; transform: translateX(0); }}
 .user-portal .topbar-user-dropdown {
   overflow: visible;
 }
-@media (max-width: 1180px) {.user-portal .topbar-brand { min-width: 180px; }
+@media (max-width: 1180px) {.user-portal .topbar-brand { min-width: 142px; }
 .user-portal .topbar-logo {
-    width: 170px !important;
-    max-width: 170px !important;
+    width: 150px !important;
+    max-width: 150px !important;
     height: 52px !important;
   }}
 @media (max-width: 980px) {.user-portal .topbar-brand { min-width: auto; }
