@@ -11,24 +11,35 @@ function getToken(type = "applicant") {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const MAX_RETRIES = 2;
+const NETWORK_MESSAGE = "Server is waking up or temporarily unavailable. Please wait a few seconds and try again.";
+const RETRYABLE_POST_PATHS = new Set([
+  "/auth/register-company",
+  "/auth/resend-company-verification",
+  "/auth/applicant/register",
+  "/auth/applicant/resend-verification",
+  "/auth/applicant/forgot-password",
+  "/auth/hr/forgot-password",
+]);
 
 async function request(path, options = {}, tokenType = "applicant") {
+  const { retry = false, ...fetchOptions } = options;
   const token = getToken(tokenType);
-  const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
+  const headers = { "Content-Type": "application/json", ...(fetchOptions.headers || {}) };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const method = (options.method || "GET").toUpperCase();
-  const retryable = method === "GET";
+  const method = (fetchOptions.method || "GET").toUpperCase();
+  const retryable = method === "GET" || retry || RETRYABLE_POST_PATHS.has(path);
+  const maxAttempts = retryable ? MAX_RETRIES : 0;
 
   let lastErr;
-  for (let attempt = 0; attempt <= (retryable ? MAX_RETRIES : 0); attempt += 1) {
+  for (let attempt = 0; attempt <= maxAttempts; attempt += 1) {
     let res;
     try {
-      res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
+      res = await fetch(`${BASE_URL}${path}`, { ...fetchOptions, headers });
     } catch {
-      lastErr = new Error("Server is waking up or temporarily unavailable. Please wait a few seconds and try again.");
-      if (retryable && attempt < MAX_RETRIES) {
-        await sleep(500 * (attempt + 1));
+      lastErr = new Error(NETWORK_MESSAGE);
+      if (retryable && attempt < maxAttempts) {
+        await sleep(1200 * (attempt + 1));
         continue;
       }
       throw lastErr;
@@ -40,8 +51,8 @@ async function request(path, options = {}, tokenType = "applicant") {
       window.dispatchEvent(new CustomEvent("auth:expired", { detail: { type: tokenType } }));
     }
 
-    if (res.status >= 500 && retryable && attempt < MAX_RETRIES) {
-      await sleep(500 * (attempt + 1));
+    if (res.status >= 500 && retryable && attempt < maxAttempts) {
+      await sleep(1200 * (attempt + 1));
       continue;
     }
 
@@ -59,7 +70,7 @@ async function request(path, options = {}, tokenType = "applicant") {
 
 export const api = {
   get: (path, tokenType) => request(path, { method: "GET" }, tokenType),
-  post: (path, body, tokenType) => request(path, { method: "POST", body: JSON.stringify(body) }, tokenType),
+  post: (path, body, tokenType, config = {}) => request(path, { method: "POST", body: JSON.stringify(body), retry: config.retry }, tokenType),
   put: (path, body, tokenType) => request(path, { method: "PUT", body: JSON.stringify(body) }, tokenType),
   patch: (path, body, tokenType) => request(path, { method: "PATCH", body: JSON.stringify(body) }, tokenType),
   delete: (path, tokenType) => request(path, { method: "DELETE" }, tokenType),
