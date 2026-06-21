@@ -526,7 +526,10 @@ to { opacity: 1; transform: translateX(0); }}
 @media (max-width: 1180px) {.user-portal .topbar-shell { padding: 0 16px; gap: 12px; }
 .user-portal .topbar-logo { width: 128px; }
 .user-portal .top-nav-link { font-size: 12px; padding: 8px 10px; gap: 5px; }}
-@media (max-width: 1280px) {.user-portal .topbar-nav { display: none; }
+@media (max-width: 1320px) {.user-portal .topbar-user-text { display: none; }
+.user-portal .top-nav-link { font-size: 12px; padding: 8px 8px; gap: 5px; }
+.user-portal .top-nav-link svg { width: 15px; height: 15px; }}
+@media (max-width: 1100px) {.user-portal .topbar-nav { display: none; }
 .user-portal .topbar-user-text { display: none; }
 .user-portal .topbar-menu-btn { display: inline-flex !important; }
 .user-portal .topbar-shell { justify-content: space-between; }}
