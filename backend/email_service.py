@@ -67,7 +67,12 @@ def _send_resend(to_email: str, subject: str, body: str, html_body: Optional[str
     request = urllib.request.Request(
         "https://api.resend.com/emails",
         data=json.dumps(payload).encode("utf-8"),
-        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "TalentFlow/1.0",
+        },
         method="POST",
     )
     try:
@@ -138,8 +143,7 @@ def send_email(to_email: str, subject: str, body: str, html_body: Optional[str] 
     if resend_key:
         result = _send_resend(to_email, subject, body, html_body)
         attempted.append(result)
-        if result.get("sent"):
-            return result
+        return result
 
     result = _send_smtp(to_email, subject, body, html_body)
     attempted.append(result)
