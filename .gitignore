@@ -1,78 +1,16 @@
-# TalentFlow local files
-
-# Environment files
 .env
-.env.local
-.env.*.local
+.env.*
 !.env.example
 
-# Frontend
-frontend/node_modules/
-frontend/dist/
-frontend/.vite/
-frontend/coverage/
-
-# Backend
-backend/__pycache__/
-backend/**/__pycache__/
-backend/*.pyc
-backend/*.pyo
-backend/.venv/
-backend/venv/
-backend/env/
-backend/talentflow.db
-backend/talentflow.db.backup*
-backend/uploads/*
-!backend/uploads/.gitkeep
-
-# Root runtime artifacts
-/talentflow.db
-/talentflow.db.backup*
-/uploads/
-/*.log
-/*.tmp
-
-# Temporary project reports
-/COMPLETED_TASKS.md
-/FIXES_SUPER_ADMIN_SQL_ALIGNMENT.md
-/FIX_NOTES.md
-/INTEGRATION_AUDIT.md
-/MODIFICATION_REPORT.md
-/SAAS_ARCHITECTURE.md
-/SETUP_AFTER_FIX.md
-
-# Python general
-*.py[cod]
-*.egg-info/
-dist/
-*.egg
-.mypy_cache/
-.pytest_cache/
-.ruff_cache/
-htmlcov/
-.coverage
-
-# Node general
 node_modules/
-npm-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+dist/
+build/
 
-# Logs
-*.log
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
 
-# OS files
 .DS_Store
 Thumbs.db
-desktop.ini
-
-# Editors
-.vscode/settings.json
-.idea/
-*.swp
-*.swo
-
-# Archives and temporary files
-*.zip
-*.tar.gz
-*.tmp

@@ -1,0 +1,13 @@
+<svg width="168" height="40" viewBox="0 0 168 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="1" y="1" width="38" height="38" rx="12" fill="url(#g)"/>
+  <path d="M12 11H29V16H23V29H18V16H12V11Z" fill="white"/>
+  <path d="M50 11H82" stroke="#7BBDE8" stroke-width="3" stroke-linecap="round"/>
+  <text x="50" y="27" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800" fill="#001D39">TalentFlow</text>
+  <defs>
+    <linearGradient id="g" x1="1" y1="1" x2="39" y2="39" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#001D39"/>
+      <stop offset="0.55" stop-color="#0A4174"/>
+      <stop offset="1" stop-color="#7BBDE8"/>
+    </linearGradient>
+  </defs>
+</svg>
