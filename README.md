@@ -126,7 +126,7 @@ Backend environment file:
 Important backend values:
 
 ```text
-DATABASE_URL=sqlite:///./talentflow.db
+DATABASE_URL=postgresql://user:password@host.neon.tech/dbname?sslmode=require
 FRONTEND_URL=https://talentflow-platform.vercel.app
 PORT=8001
 HOST=0.0.0.0
@@ -153,10 +153,30 @@ Backend docs: https://talentflow-backend-asoo.onrender.com/docs
 
 ## Deployment Settings
 
+Neon database:
+
+```text
+Use the pooled or direct connection string from Neon.
+Set it on Render as DATABASE_URL.
+The URL should include sslmode=require.
+```
+
+Resend email:
+
+```text
+Create an API key in Resend.
+Verify a sender domain or use the verified sandbox sender.
+Set these on Render:
+RESEND_API_KEY=<your Resend API key>
+EMAIL_FROM=TalentFlow <onboarding@your-domain.com>
+ALLOW_DEV_EMAIL_FALLBACK=false
+```
+
 Vercel frontend:
 
 ```text
 Root Directory: 02_src/frontend
+Install Command: npm install
 Build Command: npm run build
 Output Directory: dist
 Environment Variable:
@@ -169,12 +189,17 @@ Render backend:
 Root Directory: 02_src/backend
 Build Command: pip install -r requirements.txt
 Start Command: python -m uvicorn main:app --host 0.0.0.0 --port $PORT
-Environment Variable:
+Environment Variables:
+DATABASE_URL=<Neon PostgreSQL URL>
 FRONTEND_URL=https://talentflow-platform.vercel.app
+RESEND_API_KEY=<Resend API key>
+EMAIL_FROM=TalentFlow <onboarding@your-domain.com>
+ENVIRONMENT=production
+ALLOW_DEV_EMAIL_FALLBACK=false
 ```
 
 ## Notes
 
-- The active SQLite database is stored inside `backend/talentflow.db`.
+- Local development can use SQLite at `02_src/backend/talentflow.db`; production should use Neon PostgreSQL.
 - Generated folders such as `frontend/dist`, `frontend/node_modules`, Python cache folders, logs, and local database backups should not be committed.
 - Keep real secrets only in `.env` files and use `.env.example` for templates.

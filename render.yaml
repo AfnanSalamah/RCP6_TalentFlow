@@ -10,5 +10,13 @@ services:
         value: production
       - key: FRONTEND_URL
         value: https://talentflow-platform.vercel.app
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
       - key: ALLOW_DEV_EMAIL_FALLBACK
         value: "false"
