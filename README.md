@@ -188,10 +188,11 @@ Render backend:
 ```text
 Root Directory: 02_src/backend
 Build Command: pip install -r requirements.txt
-Start Command: python -m uvicorn main:app --host 0.0.0.0 --port $PORT
+Start Command: gunicorn main:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --workers $WEB_CONCURRENCY --timeout 120
 Environment Variables:
 DATABASE_URL=<Neon PostgreSQL URL>
 FRONTEND_URL=https://talentflow-platform.vercel.app
+WEB_CONCURRENCY=2
 RESEND_API_KEY=<Resend API key>
 EMAIL_FROM=TalentFlow <onboarding@your-domain.com>
 ENVIRONMENT=production
