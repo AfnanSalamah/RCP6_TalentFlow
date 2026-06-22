@@ -18,6 +18,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from database import get_db
+from config import settings
 from auth import hash_password, create_access_token, decode_token, is_expired
 from email_service import send_email
 from NotificationEmailService import render_notification_email
@@ -154,7 +155,7 @@ def _send_company_verification(admin: models.HRUser, db: Session):
         "message": "Welcome to TalentFlow. To activate your company workspace and begin recruiting talent, verify your company account using the verification code below.",
         "badge": "Company Verification",
         "cta_label": "Verify Company Account",
-        "action_url": "http://localhost:5173/verify-company-email",
+        "action_url": f"{settings.FRONTEND_URL}/verify-company-email",
     })
     result = send_email(
         admin.email,

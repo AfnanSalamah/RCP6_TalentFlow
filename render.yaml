@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: talentflow-backend-asoo
+    runtime: python
+    rootDir: 02_src/backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: FRONTEND_URL
+        value: https://talentflow-platform.vercel.app
+      - key: ALLOW_DEV_EMAIL_FALLBACK
+        value: "false"

@@ -1,6 +1,6 @@
 # TalentFlow — API Reference
 
-Interactive docs available at: **http://localhost:8001/docs** (Swagger UI)
+Interactive docs available at: **https://talentflow-backend-asoo.onrender.com/docs** (Swagger UI)
 
 ## Auth Endpoints
 

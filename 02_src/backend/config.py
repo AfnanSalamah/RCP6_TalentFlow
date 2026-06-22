@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     # Windows reserves ports 49152-65535 for dynamic use; 8001 is reliably free.
     PORT: int = 8001
     HOST: str = "0.0.0.0"
-    FRONTEND_URL: str = "http://localhost:5173"
+    FRONTEND_URL: str = "https://talentflow-platform.vercel.app"
 
     class Config:
         env_file = str(BASE_DIR / ".env")

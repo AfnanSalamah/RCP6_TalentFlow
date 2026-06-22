@@ -120,14 +120,14 @@ python seed.py
 Backend environment file:
 
 ```text
-backend/.env
+02_src/backend/.env
 ```
 
 Important backend values:
 
 ```text
 DATABASE_URL=sqlite:///./talentflow.db
-FRONTEND_URL=http://localhost:5173
+FRONTEND_URL=https://talentflow-platform.vercel.app
 PORT=8001
 HOST=0.0.0.0
 ```
@@ -135,13 +135,42 @@ HOST=0.0.0.0
 Frontend environment file:
 
 ```text
-frontend/.env
+02_src/frontend/.env
 ```
 
 Important frontend value:
 
 ```text
-VITE_API_URL=http://localhost:8001
+VITE_API_URL=https://talentflow-backend-asoo.onrender.com
+```
+
+Production URLs:
+
+```text
+Frontend: https://talentflow-platform.vercel.app
+Backend docs: https://talentflow-backend-asoo.onrender.com/docs
+```
+
+## Deployment Settings
+
+Vercel frontend:
+
+```text
+Root Directory: 02_src/frontend
+Build Command: npm run build
+Output Directory: dist
+Environment Variable:
+VITE_API_URL=https://talentflow-backend-asoo.onrender.com
+```
+
+Render backend:
+
+```text
+Root Directory: 02_src/backend
+Build Command: pip install -r requirements.txt
+Start Command: python -m uvicorn main:app --host 0.0.0.0 --port $PORT
+Environment Variable:
+FRONTEND_URL=https://talentflow-platform.vercel.app
 ```
 
 ## Notes
@@ -149,4 +178,3 @@ VITE_API_URL=http://localhost:8001
 - The active SQLite database is stored inside `backend/talentflow.db`.
 - Generated folders such as `frontend/dist`, `frontend/node_modules`, Python cache folders, logs, and local database backups should not be committed.
 - Keep real secrets only in `.env` files and use `.env.example` for templates.
-
